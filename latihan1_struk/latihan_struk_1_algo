@@ -1,0 +1,71 @@
+program double_circuler_linked_list
+{i.s:}
+{f.s:}
+
+kamus
+    type
+        point = ^data
+        mahasiswa = record
+            nama,nim : string
+            nilai    : integer
+        endrecord
+        data = record
+            info : mahasiswa
+            prev,next : point
+        endrecord
+    
+    awal,akhir : point
+
+
+procedure create(output awal,akhir : point)
+{i.s:}
+{f.s:}
+
+kamus
+
+
+algoritma
+    awal := nil
+    akhir := nil
+endprocedure
+
+
+procedure sisip_depan(output awal,akhir: point)
+{i.s:}
+{f.s:}
+
+kamus
+    baru : point
+
+algoritma
+    alloc(baru)
+    input(baru^.info.nim)
+    input(baru^.info.nama)
+    input(baru^.info.nilai)
+    
+    if(awal=nil) 
+     then
+        awal  <- baru
+        akhir <- baru
+        baru^.next <- baru
+        baru^.prev <- baru
+     else
+        baru^.next   <- awal
+        awal^.prev   <- baru
+        awal         <- baru 
+        akhir^.next  <- baru
+        baru^.prev   <- akhir
+    endif
+endprocedure
+
+procedure sisip_belakang()
+
+kamus
+
+algoritma
+    alloc(baru)
+    input(baru^.info.nim)
+    input(baru^.info.nama)
+    input(baru^.info.nilai)
+
+    if()

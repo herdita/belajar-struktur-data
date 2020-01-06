@@ -1,0 +1,474 @@
+program Perpustakaan
+{i.s:}
+{f.s:}
+
+kamus
+    const
+        maks_data   = 100
+        user        = kelompok1
+        pass        = 1
+
+    type
+        dt_buku= record
+            kode_bk,nama_bk,pengarang : string
+            tahun : integer
+        endrecord
+
+        dt_identitas= record
+            nama,kelamin,alamat :string
+        endrecord
+
+        dt_pinjam= record
+            tgl,bulan,tahun : integer
+        endrecord
+
+        arr_bk = array[1..maks_data]of dt_buku
+
+    buku             : arr_bk
+    identitas        : dt_identitas
+    pinjam           : dt_pinjam
+    np,ks            : string
+    pilihan,n,jumlah : integer
+    tahan,langkah,p  : integer
+
+
+function login(input np,ks:string)-> boolean
+{i.s:}
+{f.s:}
+
+kamus {kamus lokal}
+    i:integer
+
+Algoritma :
+     i <- 1
+     while((np<>user) or (ks<>pass)) and (i<>3)do
+        Output(' Login Failed ')
+        input(np)
+        input(ks)
+        i <- i+1
+     endwhile
+     if(i <= 3)and(np = user)and(ks=pass)
+       then
+         login <- true
+       else
+         login <- false
+     EndIf    
+endFunction
+
+
+procedure creat(output buku:arr_bk)
+{i.s:}
+{f.s:}
+
+kamus
+    i <- integer
+
+Algoritma
+    for i <- 1 to maks_data do
+        buku[i].kode_bk <- 0
+        buku[i].nama_bk <- ' '
+        buku[i].tahun   <- 0
+        buku[i].pengarang <- ' '
+    endfor
+    writeln('Data berhasil diciptakan')
+endprocedure
+
+
+procedure input_data(ouput n:integer,buku:arr_bk)
+{i.s:}
+{f.s:}
+
+kamus
+    i:integer
+
+Algoritma
+    output('-----------------------------')
+    output(' Masukan banyaknya data : ') input(n)
+    output('-----------------------------')
+    while(n > maks_data)do
+        output('maaf data yang di inputkan min 100 data')
+        input(n)
+    endwhile
+
+    output('-------------------------------------------------------')
+    output('                  Pemasukan Data Buku                  ')
+    output('-------------------------------------------------------')
+    output('| Kode buku |    Nama buku    | Tahun |   Pengarang   |')
+    output('-------------------------------------------------------')
+    for i <- 1 to n do
+        output('|           |                 |       |               |')
+        input(buku[i].kode_bk)
+        input(buku[i].nama_bk)
+        input(buku[i].tahun)
+        input(buku[i].pengarang)
+    endfor
+    output('-------------------------------------------------------')
+endprocedure
+
+
+procedure merge(output buku:arr_bk, langkah:integer, awal, tengah, akhir:integer)
+{i.s:}
+{f.s:}
+
+kamus 
+    k, i, j, l:integer
+    data_temp:arr_bk
+
+algoritma 
+    i <- awal
+    j <- tengah + 1
+    k <- awal
+    repeat
+    if (buku[i].kode_bk >= buku[j].kode_bk) then
+        data_temp[k] := buku[i]
+        inc(i)
+    else
+        data_temp[k] <- buku[j]
+        inc(j)
+    endif
+ 
+    inc(k)
+    inc(langkah)
+    until (i > tengah) or (j > akhir)
+ 
+    if (i > tengah) then
+        for l <- j to akhir do
+            data_temp[k] <- buku[l]
+            inc(k)
+        endfor
+    else
+        for l <- i to tengah do
+            data_temp[k] <- buku[l]
+            inc(k)
+        endfor
+    endif
+
+    for k <- awal to akhir do
+        buku[k] <- data_temp[k]
+    endfor
+endprocedure
+ 
+
+procedure insert_data(input n:integer output buku:arr_bk)
+{i.s:}
+{f.s:}
+
+ 
+kamus
+    i:integer
+
+Algoritma 
+    for i <- 1 to n do
+        output(buku[i].kode_bk,',')
+    endfor
+endprocedure
+ 
+
+
+procedure show_data(input n:integer, buku:arr_bk)
+{i.s:}
+{f.s:}
+
+kamus
+    i:integer
+ 
+algoritma
+    for i := 1 to n do
+        write(buku[i].kode_bk, ' ')
+    endfor
+endprocedure 
+    
+
+procedure merge_sort(output buku:arr_bk, awal,akhir:integer)
+{i.s:}
+{f.s:}
+
+kamus 
+    tengah:integer
+ 
+algoritma
+    inc(p);
+    if (awal < akhir) then
+        tengah <- (awal + akhir) div 2
+        merge_sort(buku, awal, tengah)
+        merge_sort(buku, tengah + 1, akhir)
+        merge(buku,langkah, awal, tengah, akhir)
+            inc(tahap)
+            output('TAHAP ',tahap)
+            show_data(n,buku)
+    endif
+endprocedure
+
+
+procedure tampil(input n:integer, ouput buku:arr_bk)
+{i.s:}
+{f.s:}
+
+kamus
+    {tidak ada}
+
+algoritma
+           output('MERGE SORT')
+           output('--------------------')
+           output('DATA SEBELUM DIURUTKAN')
+           insert_data(n,buku)
+           output('PROSES PENGURUTAN DATA')
+           merge_sort(buku, 1, n)
+           output('DATA SESUDAH DIURUTKAN')
+           show_data(n,buku)
+           output('Pengurutan Terdiri Dari : ',tahap, ' Tahap & ',langkah,' Langkah')
+endprocedure
+
+
+
+procedure search_kode_bk(input n:integer, output buku:arr_bk)
+{i.s:}
+{f.s:}
+
+kamus
+    search  : string
+    ketemu  : boolean
+    k,ia,ib : integer
+
+Algoritma
+    //metode binary search 
+    output('-----------------------------')
+    output(' Kode buku yang di cari : ') input(search)
+    output('-----------------------------')
+    ia <- 1
+    ib <- n
+    ketemu <- false
+    while(not ketemu)and(ia <= ib)do
+        k <- (ia+ib) div 2
+        if(search = buku[k].kode_bk)
+            then
+                ketemu <- true
+            else
+                if(search > buku[k].kode_bk)
+                    then
+                        ia <- k+1
+                    else
+                        ib <- k-1
+                Endif
+        Endif
+    endwhile
+    if(ketemu)
+        then
+            output('                  Pencarian Data Buku                  ')
+            output('-------------------------------------------------------')
+            output('| Kode buku |    Nama buku    | Tahun |   Pengarang   |')
+            output('-------------------------------------------------------')
+            output('|           |                 |       |               |')
+            output(buku[k].kode_bk)
+            output(buku[k].nama_bk)
+            output(buku[k].tahun)
+            output(buku[k].pengarang)
+        else
+            output('Maaf data yang anda cari tidak ada')
+    endif
+endprocedure
+
+
+Procedure peminjaman(Input n:integer; Output identitas:dt_identitas buku:arr_bk, jumlah:integer, pinjam:dt_pinjam)
+{I.S. : user memasukkan identitas diri, dan buku yang akan dipinjam}
+{F.S. : menampilkan tanggal pengembalian buku}
+
+Kamus
+    i,k         : integer
+    ketemu      : boolean
+    search      : string
+
+Algoritma
+    Output('          Peminjaman Buku Perpustakaan        ')
+    Output('            Masukan Identitas Anda            ')
+    Output('----------------------------------------------')
+    Output(' Nama Lengkap  : ') Input(identitas.nama)
+    Output(' Jenis Kelamin : ') Input(identitas.kelamin)
+    Output(' Alamat        : ') Input(identitas.alamat)
+    Output('----------------------------------------------')
+    
+    Output('Jumlah Buku Yang di Pinjam : ') 
+    Input(jumlah)
+    //validasi
+    while(jumlah > 3)do
+        Output('Maaf Jumlah Peminjaman tidak boleh lebih dari 3')
+        input(jumlah)
+    endwhile
+
+    Output('-----------------------------------------------------')
+    Output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+    Output('-----------------------------------------------------')
+        for i <- 1 to jumlah do
+            repeat
+                Output('|           |                 |       |             |')
+                Input(search)
+                ketemu <- false
+                k <- 1
+                while(buku[k].kode_bk <> search) and (k < n)do
+                    k <- k+1
+                endwile
+                if(buku[k].kode_bk = search) 
+                  then
+                    Output(buku[k].nama_bk)
+                    Output(buku[k].tahun)
+                    Output(buku[k].pengarang)
+                    ketemu <- true    
+                  else
+                    Output('Maaf Kode buku Yang anda cari tidak Ada')
+                endif 
+            until (ketemu=true)
+            Output('-----------------------------------------------------')
+        endfor
+
+    Output('Tanggal Peminjaman buku')
+    Output('-----------------------')
+    Output(' Contoh 24 - 2 - 2017  ')
+    Output('-----------------------')
+    Output('| Tgl | Bulan | Tahun |')
+    Output('-----------------------')
+    Output('|     |       |       |')
+    Input(pinjam.tgl)
+    Input(pinjam.bulan)
+    Input(pinjam.tahun)
+    Output('-----------------------')
+    Output(' Terima kasih Atas Kunjungannya ')
+endProcedure
+
+
+procedure konversi_data(output pinjam:dt_pinjam)
+{i.s:}
+{f.s:}
+
+kamus
+    sisa,konversi :integer
+
+Algoritma
+    konversi <- ((pinjam.tahun * 365) + (pinjam.bulan * 30) + pinjam.tgl + 14)
+    pinjam.tahun <- konversi div 365
+    sisa         <- konversi mod 365
+    pinjam.bulan <- sisa div 30
+    pinjam.tgl   <- sisa mod 30
+endprocedure
+
+
+procedure tampil_data(input buku:arr_bk, identitas:dt_identitas, jumlah:integer, pinjam:dt_pinjam)
+{i.s:}
+{f.s:}
+
+kamus
+    i: integer
+
+Algoritma
+    output('-------------------------------------------------------')
+    output('                  Pemasukan Data Buku                  ')
+    output('-------------------------------------------------------')
+    output('| Kode buku |    Nama buku    | Tahun |   Pengarang   |')
+    output('-------------------------------------------------------')
+    for i <- 1 to n do
+        output('|           |                 |       |               |')
+        output(buku[i].kode_bk)
+        output(buku[i].nama_bk)
+        output(buku[i].tahun)
+        output(buku[i].pengarang)
+    endfor
+    output('-------------------------------------------------------')
+
+    Output('               Identitas Anda            ')
+    Output('-----------------------------------------')
+    Output(' Nama Lengkap  : ',identitas.nama)
+    Output(' Jenis Kelamin : ',identitas.kelamin)
+    Output(' Alamat        : ',identitas.alamat)
+    Output('-----------------------------------------')
+    output(' Jumlah Buku yang di pinjam : ',jumlah)
+    konversi_data(pinjam); 
+    Output(' Batas Akhir Pengembalian buku Tanggal: ',pinjam.tgl,',  bulan: ',pinjam.bulan,', Tahun: ',pinjam.tahun)
+    Output(' Note : jika buku terlambat di kembalikan, Maka di Denda, 1 buku perhari Rp.300 ')
+endprocedure
+
+
+procedure destroy(output buku:arr_bk)
+{I.S.:}
+{F.S.:}
+
+kamus
+   i        :integer
+   pilihan  :string
+
+algoritma
+    write('Apakah Anda Yakin Untuk Menghapus Semua Data?');
+    write('Pilihan hanya ada y(Ya) dan t(Tidak),coba lagi = ');
+    readln(pilihan);
+    if(pilihan = 'y') then
+        for i <- 1 to maks_data do
+            buku[i].kode_bk   <- '/'
+            buku[i].nama_bk   <- '/'
+            buku[i].tahun     <- 0
+            buku[i].pengarang <- '/'
+        endfor
+        write('Data berhasil dihapus')
+    endif
+    if(pilihan = 't') then
+        write('Akan dikembalikan kepada tampilan menu,klik ENTER!')
+    endif
+endprocedure
+
+
+Procedure menu_perpus(Output pilihan:integer)
+{I.S. : Menampilkan Menu Utama dari program perpustakaan}
+{F.S. : Mengeksekusi menu yang telah  dipilih}
+
+Kamus : {kamus lokal}
+    {tidak ada}
+
+Algoritma :
+    Output('============================================')
+    Output('|              Selamat Datang              |')
+    Output('--------------------------------------------')
+    Output('|               Perpustakaan               |')
+    Output('--------------------------------------------')
+    Output('|****      1. Create Data Buku         ****|')
+    Output('|**        2. Input Data Buku            **|')
+    Output('|**        3. Pengurutan Data Buku       **|')
+    Output('|*         4. Pencarian Data Kode Buku    *|')
+    Output('|*         5. Peminjaman Buku             *|')
+    Output('|**        6. Tampil data Buku           **|')
+    Output('|****      0. Keluar & destroy         ****|')
+    Output('--------------------------------------------')
+    Output('Daftar Pilihan : ') 
+    Input(pilihan)
+    
+    {validasi}
+    while(pilihan < 0) or (pilihan > 6)do
+        Output('Pilihan anda tidak ada di daftar')
+        input(pilihan)
+    endwhile
+endProcedure
+
+
+Algoritma  {Algoritma utama}
+    Output('           LOGIN           ')
+    Output('---------------------------')
+    Output(' Nama pengguna  : ')
+    Input(np)
+    Output(' kata Sandi     : ')  
+    Input(ks)
+    Output('---------------------------')
+    if(login(np,ks))
+        then //login succes
+            repeat
+                menu_perpus(pilihan)
+                Depend(pilihan)On
+                    1 : create(buku)
+                    2 : input_data(n,buku)
+                    2 : pengurutan()
+                    3 : search_kode_bk(n,buku)
+                    4 : peminjaman(n,identitas,buku,jumlah,pinjam)
+                    5 : tampil_data(input buku:dt_buku, identitas:dt_identitas, jumlah:integer, pinjam:dt_pinjam)
+                        destroy(buku)
+                EndDepend
+            until(pilihan = 0)
+        else
+            Output('maaf,sudah 3 kali salah login')
+    endif
+    
+   

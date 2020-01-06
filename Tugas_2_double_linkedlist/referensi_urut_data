@@ -1,0 +1,29 @@
+procedure urutnimasc(var awal,akhir : point);
+
+var
+    i,j,min : point;
+    temp    : mahasiswa;
+
+begin
+    i := awal;
+    while(i <> akhir) do
+    begin
+        min := i;
+        j   := min^.next;
+        while(j <> nil) do
+        begin
+            if(j^.info.nim <= min^.info.nim) then
+                min:= j;
+            
+        j := j^.next;
+        end;
+        //pertukaran data
+        temp        := i^.info;
+        i^.info     := min^.info;
+        min^.info   := temp;
+
+        i:= i^.next
+    end; //endwhile
+
+end; //endprocedure
+

@@ -1,0 +1,601 @@
+procedure SisipDepan(output awal,akhir:point)
+{i.s: User memasukan data buku perpus}
+{f.s: Menghasilkan data buku yang dimasukan}
+
+Kamus 
+    baru : point
+    i,n: integer
+
+Algoritma
+    output('Jumlah data yang disisipkan Didepan: ') input(n)
+    output('-----------------------------------------------------')
+    output('                      Sisip Depan                    ')
+    output('-----------------------------------------------------')
+    output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+    output('-----------------------------------------------------')
+    for i <- 1 to n do
+        alloc(baru)
+        output('|           |                 |       |             |')
+        input(baru^.info.kode)
+        input(baru^.info.nama)
+        input(baru^.info.tahun)
+        input(baru^.info.pengarang)
+        baru^.prev <- nil
+        if(awal = nil) then
+            baru^.next <- nil
+            akhir <- baru
+        else
+            baru^.next <- awal
+            awal^.prev <- baru
+        endif
+        awal <- baru
+    endfor 
+    output('-----------------------------------------------------')
+endprocedure     
+
+
+procedure sisiptengah(output awal,akhir:point)
+{i.s: User memasukan data buku perpus}
+{f.s: Menghasilkan data buku yang dimasukan}
+
+Kamus
+    baru,bantu: point
+    i,list : integer
+    
+Algoritma
+    output('list keberapa yang akan dimasukan :') input(list)
+    output('-----------------------------------------------------')
+    output('                     Sisip Tengah                    ')
+    output('-----------------------------------------------------')
+    output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+    output('-----------------------------------------------------')  
+        alloc(baru)
+        output('|           |                 |       |             |')
+        input(baru^.info.kode)
+        input(baru^.info.nama)
+        input(baru^.info.tahun)
+        input(baru^.info.pengarang)
+        
+        if(awal = nil) then
+            baru^.next <- nil
+            baru^.prev <- nil
+            awal <- baru
+            akhir <- baru
+        else 
+            bantu <- awal
+            i <- 1
+            while(bantu <> akhir)do
+                bantu^.info.posisi <- i
+                if(bantu^.info.posisi <> list) then
+                    bantu<- bantu^.next
+                    bantu^.info.posisi <- i+1
+                    i<- i+1
+                else
+                    baru^.next <- bantu
+                    baru^.prev <- bantu^.prev
+                    bantu^.prev^.next <- baru
+                    bantu^.next <- baru
+                endif 
+            endwhile
+        endif          
+    output('-----------------------------------------------------')
+endprocedure
+
+
+procedure sisipbelakang(output awal,akhir:point)
+{i.s: User memasukan data buku perpus}
+{f.s: Menghasilkan data buku yang dimasukan}
+
+Kamus
+    baru: point
+    n,i : integer
+
+Algoritma
+    output('Jumlah data yang disisipkan : ') input(n)
+    output('-----------------------------------------------------')
+    output('                    Sisip Belakang                   ')
+    output('-----------------------------------------------------')
+    output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+    output('-----------------------------------------------------')
+    for i <- 1 to n do
+        alloc(baru)
+        output('|           |                 |       |             |')
+        input(baru^.info.kode)
+        input(baru^.info.nama)
+        input(baru^.info.tahun)
+        input(baru^.info.pengarang)       
+        baru^.next <- nil
+        if(akhir = nil) then
+            baru^.prev <- nil
+            akhir <- baru
+        else
+        
+            baru^.prev <- akhir
+            akhir^.next<- baru
+        endif
+        akhir <- baru
+    endfor
+    output('-----------------------------------------------------')
+endprocedure 
+
+
+procedure hapussama(output awal,akhir:point)
+{i.s: harga sudah terdefinisi}
+{f.s: memproses dan menghapus kode buku yang nilainya sama}
+
+Kamus
+    bantu, bantu2, phapus : point
+
+Algoritma
+    bantu <- awal
+    while(bantu <> akhir) do
+        phapus <- bantu^.next
+        while(phapus <> nil) do
+            if(phapus^.info.kode = bantu^.info.kode) then
+                if(phapus = akhir) then
+                    akhir       <- akhir^.prev
+                    akhir^.next <- nil
+                    dispose(phapus)
+                    phapus      <- nil 
+                else
+                    bantu2 <- phapus^.next 
+                    phapus^.prev^.next <- bantu2
+                    bantu2^.prev <- phapus^.prev
+                    dispose(phapus)
+                    phapus <- bantu2
+                endif
+            else
+                phapus <- phapus^.next
+            endif
+        endwhile 
+        bantu <- bantu^.next
+    endwhile
+endprocedure 
+
+
+procedure hapusDepan(output awal,akhir:point)
+{i.s: Data sudah terdefinisi}
+{f.s: menghapus data yang awal / depan}
+
+Kamus
+    phapus: point
+
+Algoritma
+    phapus<- awal
+    if(awal=akhir) then
+        akhir <- nil
+        awal  <- nil
+        dispose(phapus)
+    else
+        awal <- awal^.next
+        awal^.prev <- nil
+        dispose(phapus)   
+    endif
+    output('-------------------------')
+    output('Data Depan Sudah Di hapus')
+    output('-------------------------')
+endprocedure
+
+
+procedure hapusTengah(output awal,akhir:point)
+{i.s: user memasukan Kode buku yang akan dihapus}
+{f.s: menghapus data buku tersebut}
+
+Kamus
+    phapus : point
+    ketemu : boolean
+    kode_hapus: string
+
+Algoritma
+    output('Nim Yang akan di hapus : ') input(kode_hapus)
+    phapus <- awal
+    ketemu <- false
+    while(not ketemu) and (phapus <> nil)do
+        if(phapus^.info.kode = kode_hapus) then
+            ketemu <- true
+        else
+            phapus <- phapus^.next
+        endif
+    endwhile 
+    if(ketemu) then
+        if(phapus = awal) then
+            awal <- awal^.next
+            awal^.prev <- nil
+            dispose(phapus)
+        else
+            if(phapus = akhir) then
+                akhir <- akhir^.prev
+                akhir^.next <- nil
+                dispose(phapus)
+            else
+                phapus^.prev^.next <- phapus^.next
+                phapus^.next^.prev <- phapus^.prev
+            endif
+        endif
+        output('Data Dengan Kode Buku ',kode_hapus,' Sudah dihapus')
+    else
+        output('Nim ' ,kode_hapus,' Tidak ditemukan')
+    endif
+endprocedure 
+
+
+procedure hapusBelakang(output awal,akhir:point)
+{i.s: Harga / data sudah terdefinisi}
+{f.s: Menghapus data buku}
+
+Kamus
+    phapus: point
+
+Algoritma
+    phapus<- akhir
+    if(awal=akhir) then
+        akhir <- nil
+        awal  <- nil
+        dispose(phapus)
+    else
+        akhir <- akhir^.prev
+        akhir^.next <- nil
+        dispose(phapus)   
+    endif 
+    output('-------------------------')
+    output('Data Belakang Sudah Di hapus')
+    output('-------------------------')
+endprocedure
+
+
+procedure tampildata(input awal:point)
+{i.s: harga sudah terdefinisi}
+{f.s: menampilkan data yang telah disisipkan}
+
+Kamus 
+    bantu: point
+    i: integer
+
+Algoritma
+    bantu <- awal
+    i <- 1
+    while(bantu <> nil) do
+        output('-----------------------------------------------------')
+        output('               Menampilkan Data Buku                 ')
+        output('-----------------------------------------------------')
+        output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+        output('-----------------------------------------------------')
+        output('|           |                 |       |             |')
+        output(bantu^.info.kode)
+        output(bantu^.info.nama)
+        output(bantu^.info.tahun)
+        output(bantu^.info.pengarang)
+        bantu <- bantu^.next
+        i <- i+1
+    endwhile
+    output('-----------------------------------------------------')
+endprocedure
+
+
+procedure Cari_kode(input awal : point)
+{i.s: user memasukan kode buku yang akan dicari}
+{f.s: menampilkan data buku yang dicari}
+
+Kamus
+    kodecari: string
+    ketemu : boolean
+    bantu  : point
+
+
+    if(awal = nil) then
+        output('Data masih Kosong')
+    else
+        output('Kode buku yang dicari : ') input(kodecari)
+        bantu  <- awal
+        ketemu <- false
+        while(not ketemu) and (bantu <> nil) do
+            if(bantu^.info.kode = kodecari) then
+                ketemu <- true
+            else
+                bantu <- bantu^.next
+            endif
+        endwhile
+        if(ketemu) then
+            output('-----------------------------------------------------')
+            output('                  Data yang dicari                   ')
+            output('-----------------------------------------------------')
+            output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+            output('-----------------------------------------------------')            
+            output('|           |                 |       |             |')
+            output(bantu^.info.kode)
+            output(bantu^.info.nama)
+            output(bantu^.info.tahun)
+            output(bantu^.info.pengarang)
+            output('-----------------------------------------------------')  
+        else
+        output('Kode Buku ',kodecari,' tidak di temukan')
+        endif
+    endif
+endprocedure
+
+
+procedure Cari_nama(input awal : point)
+{i.s: user memasukan nama buku yang akan dicari}
+{f.s: menampilkan data buku yang dicari}
+
+Kamus
+    kodecari: string
+    ketemu : boolean
+    bantu  : point
+
+Algoritma
+    if(awal = nil) then
+        output('Data masih Kosong')
+    else
+        output('Nama Buku yang dicari : ') input(kodecari)
+        bantu  <- awal
+        ketemu <- false
+        while(not ketemu) and (bantu <> nil) do
+            if(bantu^.info.nama = kodecari) then
+                ketemu <- true
+            else
+                bantu <- bantu^.next
+            endif
+        endwhile
+        if(ketemu) then
+            output('-----------------------------------------------------')
+            output('                  Data yang dicari                   ')
+            output('-----------------------------------------------------')
+            output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+            output('-----------------------------------------------------')            
+            output('|           |                 |       |             |')
+            output(bantu^.info.kode)
+            output(bantu^.info.nama)
+            output(bantu^.info.tahun)
+            output(bantu^.info.pengarang)
+            output('-----------------------------------------------------')  
+        else
+            output('Kode Buku ',kodecari,' tidak di temukan')
+        endif
+    endif
+endprocedure
+
+
+procedure Cari_pengarang(input awal : point)
+{i.s: user memasukan nama pengarang buku yang akan dicari}
+{f.s: menampilkan data buku yang dicari}
+Kamus
+    kodecari: string
+    ketemu : boolean
+    bantu  : point
+
+Algoritma
+    if(awal = nil) then
+        output('Data masih Kosong')
+    else
+        output('pengarang Buku yang dicari : ') input(kodecari)
+        bantu  <- awal
+        ketemu <- false
+        while(not ketemu) and (bantu <> nil) do
+            if(bantu^.info.pengarang = kodecari) then
+                ketemu <- true
+            else
+                bantu <- bantu^.next
+            endif
+        endwhile
+        if(ketemu) then
+            output('-----------------------------------------------------')
+            output('                  Data yang dicari                   ')
+            output('-----------------------------------------------------')
+            output('| Kode buku |    Nama buku    | Tahun |  Pengarang  |')
+            output('-----------------------------------------------------')
+            output('|           |                 |       |             |')
+            output(bantu^.info.kode)
+            output(bantu^.info.nama)
+            output(bantu^.info.tahun)
+            output(bantu^.info.pengarang)
+            output('-----------------------------------------------------')  
+        else
+            output('Pengarang Buku ',kodecari,' tidak di temukan')
+        endif
+    endif
+endprocedure
+
+
+procedure penghancuran(output awal,akhir:point)
+{i.s: harga sudah terdefinisi}
+{f.s: data linked list dihancurkan / dikembalikan nilainya yaitu (nil)}
+
+Kamus
+    phapus : point
+
+Algoritma
+    phapus <- awal
+    while(phapus <> nil) do
+        awal <- awal^.next
+        dispose(phapus)
+        phapus<- awal
+    endwhile
+    akhir <- nil
+endprocedure
+
+
+procedure menu_sisip(output pilihan_sisip:integer)
+{i.s: user memasukan pilihan menu sisip data}
+{f.s: memberikan pilihan yang akan dibuka}
+
+kamus
+    //tidak ada
+
+Algoritma
+    output('============================================')
+    output('|              Menu Sisip                  |')
+    output('--------------------------------------------')
+    output('|****       1. Sisip Depan             ****|')
+    output('|**         2. Sisip tengah              **|')
+    output('|*          3. Sisip Belakang             *|')
+    output('|**         4. Kembali ke Menu Utama     **|')
+    output('--------------------------------------------')
+    output('Daftar Pilihan : ') input(pilihan_sisip)
+    {validasi}
+    while(pilihan_sisip < 0) or (pilihan_sisip > 4)do
+        output('Pilihan anda tidak ada di daftar')
+        input(pilihan_sisip)
+    endwhile
+endprocedure
+
+
+
+procedure menu_hapus(output pilihan_hapus:integer)
+{i.s: user memasukan pilihan menu hapus data }
+{f.s: memberikan pilihan yang akan dibuka}
+
+kamus 
+    //tidak ada
+
+Algoritma
+    output('============================================')
+    output('|              Menu Hapus                  |')
+    output('--------------------------------------------')
+    output('|****       1. Hapus Depan             ****|')
+    output('|**         2. Hapus tengah              **|')
+    output('|*          3. Hapus Belakang             *|')
+    output('|**         4. Kembali ke Menu Utama     **|')
+    output('--------------------------------------------')
+    output('Daftar Pilihan : ') input(pilihan_hapus)
+    {validasi}
+    while(pilihan_hapus < 0) or (pilihan_hapus > 4)do
+        output('Pilihan anda tidak ada di daftar')
+        input(pilihan_hapus)
+    endwhile
+endprocedure 
+
+
+procedure menu_cari(output pilihan_cari:integer)
+{i.s: user memasukan pilihan menu}
+{f.s: memberikan pilihan yang akan dibuka}
+
+kamus 
+    //tidak ada
+
+Algoritma
+    output('============================================')
+    output('|              Menu Cari                  |')
+    output('--------------------------------------------')
+    output('|****       1. Cari Kode Buku          ****|')
+    output('|**         2. Cari Nama Buku            **|')
+    output('|*          3. Cari Pengarang             *|')
+    output('|**         4. Kembali ke Menu Utama     **|')
+    output('--------------------------------------------')
+    output('Daftar Pilihan : ') input(pilihan_cari)
+    {validasi}
+    while(pilihan_cari < 0) or (pilihan_cari > 4)do
+        output('Pilihan anda tidak ada di daftar')
+        input(pilihan_cari)
+    endwhile
+endprocedure 
+
+
+procedure menu_utama(output menu:integer)
+{i.s: user memasukan pilihan menu}
+{f.s: memberikan pilihan yang akan dibuka}
+
+kamus 
+    //tidak ada
+
+Algoritma
+    output('============================================')
+    output('|              Selamat Datang              |')
+    output('--------------------------------------------')
+    output('|               Perpustakaan               |')
+    output('--------------------------------------------')
+    output('|****         1. Sisip Data            ****|')
+    output('|**           2. Hapus Data              **|')
+    output('|*            3. Cari Data                *|')
+    output('|**           4. Tampil Data             **|')
+    output('|****         5. Keluar                ****|')
+    output('--------------------------------------------')
+    output('Daftar Pilihan : ') input(menu)
+    {validasi}
+    while(menu < 0) or (menu > 5)do
+        output('Pilihan anda tidak ada di daftar')
+        input(menu)
+    endwhile 
+endprocedure
+
+
+
+program Perpustakaan
+{i.s: Harga Sudah terdefinisi}
+{f.s: menjalankan program dan procedure yang telah dipanggil}
+
+kamus // kamus global
+    procedure SisipDepan(output awal,akhir:point)
+    procedure sisiptengah(output awal,akhir:point)
+    procedure sisipbelakang(output awal,akhir:point)
+    procedure hapussama(output awal,akhir:point)
+    procedure hapusDepan(output awal,akhir:point)
+    procedure hapusTengah(output awal,akhir:point)
+    procedure hapusBelakang(output awal,akhir:point)
+    procedure tampildata(input awal:point)
+    procedure Cari_kode(input awal : point)
+    procedure Cari_nama(input awal : point)
+    procedure Cari_pengarang(input awal : point)
+    procedure penghancuran(output awal,akhir:point)
+    procedure menu_sisip(output pilihan_sisip:integer)
+    procedure menu_hapus(output pilihan_hapus:integer)
+    procedure menu_cari(output pilihan_cari:integer)
+    procedure menu_utama(output menu:integer)
+type
+    point = ^data
+    mahasiswa = record
+        kode,nama,pengarang,nim:string
+        tahun,posisi: integer
+    endrecord
+
+    data = record
+        info : mahasiswa
+        prev,next: point
+    endrecord
+
+    awal,akhir : point
+    lagi       : char
+    pilihan_sisip,pilihan_hapus : integer
+    pilihan_cari,menu           : integer
+
+Algoritma
+    //penciptaan
+    awal <- nil
+    akhir<- nil
+    
+    repeat
+    menu_utama(menu)
+    depend(menu)on
+        1:  repeat
+             menu_sisip(pilihan_sisip)
+                depend(pilihan_sisip)on
+                    1: SisipDepan(awal,akhir)
+                    2: sisiptengah(awal,akhir)
+                    3: sisipbelakang(awal,akhir)
+                enddepend
+            until(pilihan_sisip=4)
+            hapussama(awal,akhir)    
+        2:  repeat
+             menu_hapus(pilihan_hapus)
+                depend(pilihan_hapus)on
+                    1: hapusDepan(awal,akhir)
+                    2: hapusTengah(awal,akhir)
+                    3: hapusBelakang(awal,akhir)
+                enddepend
+            until(pilihan_hapus=4)         
+        3:  repeat   
+             menu_cari(pilihan_cari)
+                depend(pilihan_cari)on
+                    1: cari_kode(awal)
+                    2: Cari_nama(awal)
+                    3: Cari_pengarang(awal)
+                enddepend
+            until(pilihan_hapus=4)
+        4:  tampildata(awal)
+    enddepend
+    until(menu=5)
+    penghancuran(awal,akhir)
+    if(awal = nil) then
+        output('data sudah kosong')
+    endif 
+end.
